@@ -1,0 +1,25 @@
+# Dependencies (dev tooling only; the game itself has no build step)
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Python caches from the Blender generators
+__pycache__/
+*.pyc
+
+# Blender outputs that the generators regenerate (heavy binaries).
+# The editable sources tools/blender/source/*_source.blend are committed.
+tools/blender/out/
+tools/blender/renders/
+tools/blender/source/textures/
+tools/blender/source/*_baked.blend
+tools/blender/source/*_preview.blend
+*.blend1
+
+# Local AI-assistant tooling (not part of the game)
+.claude/

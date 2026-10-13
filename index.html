@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="gl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#102f42">
+    <meta
+      name="description"
+      content="BRÉTEMA: O último faro. Unha aventura náutica 3D pola Costa da Morte, feita con Three.js."
+    >
+    <title>BRÉTEMA — O último faro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='24' fill='%23102f42'/%3E%3Cpath d='M24 24 42.4 13.4A21.2 21.2 0 0 1 42.4 34.6z' fill='%23f2b84b'/%3E%3Ccircle cx='24' cy='24' r='15' fill='none' stroke='%23eaf3f2' stroke-width='2.5'/%3E%3Ccircle cx='24' cy='24' r='4.5' fill='%23ffffff'/%3E%3C/svg%3E"
+    >
+    <link rel="preload" href="assets/fonts/inter/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/bodoni-moda/BodoniModa-Italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="styles/tokens.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+    </script>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-mark" viewBox="0 0 48 48">
+        <circle cx="24" cy="24" r="24" fill="var(--abyss)" />
+        <path d="M24 24 42.4 13.4A21.2 21.2 0 0 1 42.4 34.6z" fill="var(--beacon)" />
+        <circle cx="24" cy="24" r="15" fill="none" stroke="var(--mist)" stroke-width="2.5" />
+        <circle cx="24" cy="24" r="4.5" fill="#fff" />
+      </symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24">
+        <path d="M12 2l2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6z" fill="currentColor" />
+      </symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M11 5 6 9H3v6h3l5 4z" />
+        <path class="waves" d="M15.5 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12" />
+        <path class="cross" d="M16 9.5l5 5M21 9.5l-5 5" />
+      </symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="5" width="4" height="14" />
+        <rect x="14" y="5" width="4" height="14" />
+      </symbol>
+      <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M12 20V5M6 11l6-6 6 6" />
+      </symbol>
+      <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M12 4v15M6 13l6 6 6-6" />
+      </symbol>
+      <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M18 7a8 8 0 0 0-12 2M6 4v5h5" />
+      </symbol>
+      <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M6 7a8 8 0 0 1 12 2M18 4v5h-5" />
+      </symbol>
+      <symbol id="i-meiga" viewBox="0 0 48 48">
+        <path d="M24 8c6 8 10 12 10 19a10 10 0 0 1-20 0c0-5 3-8 5-11 1 4 3 5 5 5-2-5-1-9 0-13z" fill="#fff" />
+        <rect x="12" y="38" width="24" height="3" fill="#fff" />
+      </symbol>
+      <symbol id="i-mouro" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="4">
+        <path d="M10 26a14 12 0 0 0 28 0" />
+        <circle cx="10" cy="24" r="3.5" fill="#fff" stroke="none" />
+        <circle cx="38" cy="24" r="3.5" fill="#fff" stroke="none" />
+        <rect x="21" y="8" width="6" height="8" fill="#fff" stroke="none" />
+      </symbol>
+      <symbol id="i-sereia" viewBox="0 0 48 48">
+        <path d="M24 38 8 18a20 20 0 0 1 32 0z" fill="#fff" />
+        <path d="M24 38V14M24 38 15 16M24 38l9-22" stroke="var(--moss)" stroke-width="2" />
+        <rect x="20" y="38" width="8" height="4" fill="#fff" />
+      </symbol>
+    </svg>
+
+    <div id="viewport" aria-label="Escenario tridimensional do xogo"></div>
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="cinema-bars" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand" aria-label="BRÉTEMA, O último faro">
+        <svg class="brand-mark" aria-hidden="true"><use href="#i-mark" /></svg>
+        <span class="brand-words"><b>BRÉTEMA</b><span>O último faro</span></span>
+      </div>
+      <div class="compass" aria-hidden="true">
+        <canvas id="compassStrip" class="compass-strip"></canvas>
+        <div class="compass-heading" id="headingText">000° N</div>
+      </div>
+      <div class="top-actions">
+        <button id="soundBtn" class="icon-btn" aria-label="Silenciar son" title="Son (M)">
+          <svg><use href="#i-sound" /></svg>
+        </button>
+        <button id="pauseBtn" class="icon-btn" aria-label="Pausar xogo" title="Pausa (P)">
+          <svg><use href="#i-pause" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud" id="hud" aria-label="Estado da travesía">
+      <article class="panel mission">
+        <header class="panel-head"><span>Obxectivo</span><span class="chip" id="missionState">En curso</span></header>
+        <h2 class="mission-title" id="missionTitle">Recupera a luz do Atlántico</h2>
+        <p class="mission-desc" id="missionDesc">Atopa as sete faíscas perdidas entre as illas.</p>
+        <div class="lights" role="img" aria-label="Faíscas recuperadas" id="lightsMeter">
+          <div class="pips flashes" id="pips"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="lights-count"><b id="collected">0</b><span>de 7 faíscas</span></div>
+        </div>
+        <dl class="stats">
+          <div>
+            <dt>Travesía</dt>
+            <dd id="timer">00:00</dd>
+          </div>
+          <div>
+            <dt>Velocidade</dt>
+            <dd><span id="speed">0</span><small> nós</small></dd>
+          </div>
+        </dl>
+        <div class="boost-row">
+          <span>Refacho</span>
+          <div class="boost" id="boostWrap"><div class="boost-fill" id="boostFill"></div></div>
+        </div>
+        <section class="quests hidden" id="questPanel">
+          <header class="panel-head"><span>Encontros</span></header>
+          <div class="quest-log" id="questLog" aria-live="polite"></div>
+        </section>
+      </article>
+    </section>
+
+    <div class="place" id="placeChip" aria-live="polite">
+      <span class="place-sep" aria-hidden="true"></span
+      ><span class="place-text"
+        ><small id="placeMeta">0 de 12 lugares</small><b id="placeName" class="agua">Mar aberto</b></span
+      >
+    </div>
+
+    <aside class="map-panel" aria-label="Carta náutica">
+      <canvas id="minimap" width="220" height="220"></canvas>
+      <ul class="map-legend">
+        <li><i class="lg you"></i>Ti</li>
+        <li><i class="lg spark"></i>Faísca</li>
+        <li><i class="lg npc"></i>Encontro</li>
+        <li><i class="lg faro"></i>Faro</li>
+      </ul>
+    </aside>
+
+    <div class="toast-wrap">
+      <div id="toast" class="toast" role="status" aria-live="polite">
+        <span class="toast-icon" id="toastIcon">✦</span><span id="toastText">Faísca recuperada</span>
+      </div>
+    </div>
+
+    <div id="discovery" class="discovery" aria-live="polite">
+      <div class="disc-label">Lugar novo na carta, <b id="discIdx">1 de 12</b></div>
+      <h3 id="discName">Illas Cíes</h3>
+      <span class="disc-line" aria-hidden="true"></span>
+    </div>
+    <div id="sparkCard" class="spark-card" aria-live="polite">
+      <svg class="spark-icon" aria-hidden="true"><use href="#i-spark" /></svg>
+      <div class="spark-label">Faísca recuperada</div>
+      <div class="spark-num"><b id="sparkNum">1</b><span>de 7</span></div>
+      <div class="spark-name" id="sparkName">Ría de Corcubión</div>
+    </div>
+
+    <div id="songHint" class="song-hint" aria-live="polite"></div>
+    <div id="fogHint" class="fog-hint">A brétema péchase.<span>Volve cara ás illas.</span></div>
+
+    <button id="prompt" class="prompt hidden"><kbd>E</kbd><span id="promptText">Falar</span></button>
+    <div id="dialogue" class="dialogue hidden" role="dialog" aria-hidden="true" aria-labelledby="dlgName">
+      <div class="dlg-portrait" aria-hidden="true">
+        <svg id="dlgPortrait"><use href="#i-meiga" /></svg>
+      </div>
+      <div class="dlg-body">
+        <div class="dlg-name" id="dlgName"></div>
+        <p id="dlgText"></p>
+        <div class="dlg-foot">
+          <div class="dlg-dots" id="dlgDots"></div>
+          <button id="dlgNext" class="btn btn-ghost btn-sm">Seguir</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-hint">
+      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Navegar</span><span><kbd>Espazo</kbd> Refacho</span
+      ><span><kbd>E</kbd> Falar</span><span><kbd>Arrastrar</kbd> Mirar</span><span><kbd>P</kbd> Pausa</span>
+    </div>
+
+    <div id="touchControls" class="touch-controls" aria-label="Controis táctiles">
+      <div class="touch-pad">
+        <button data-key="ArrowLeft" aria-label="Virar á esquerda">
+          <svg><use href="#i-left" /></svg>
+        </button>
+        <div class="touch-col">
+          <button data-key="ArrowUp" aria-label="Avanzar">
+            <svg><use href="#i-up" /></svg>
+          </button><button data-key="ArrowDown" aria-label="Recuar">
+            <svg><use href="#i-down" /></svg>
+          </button>
+        </div>
+        <button data-key="ArrowRight" aria-label="Virar á dereita">
+          <svg><use href="#i-right" /></svg>
+        </button>
+      </div>
+      <button class="touch-boost" data-key="Space" aria-label="Refacho">
+        <svg><use href="#i-spark" /></svg><span>Refacho</span>
+      </button>
+    </div>
+
+    <div id="perf" class="perf hidden" aria-hidden="true"></div>
+
+    <section class="screen intro" id="introOverlay" aria-labelledby="introTitle">
+      <div class="intro-sheet">
+        <h1 class="display" id="introTitle" aria-label="BRÉTEMA">
+          <span style="--i: 0" aria-hidden="true">B</span><span style="--i: 1" aria-hidden="true">R</span
+          ><span style="--i: 2" aria-hidden="true">É</span><span style="--i: 3" aria-hidden="true">T</span
+          ><span style="--i: 4" aria-hidden="true">E</span><span style="--i: 5" aria-hidden="true">M</span
+          ><span style="--i: 6" aria-hidden="true">A</span>
+        </h1>
+        <p class="subtitle reveal" style="--d: 1.7s">O último faro</p>
+        <div class="intro-lead reveal" style="--d: 2.1s">
+          <p class="lede">
+            A brétema apagou o faro de Fisterra. Sete faíscas de luz agardan espalladas pola Costa da Morte e só unha
+            pequena dorna pode devolvelas ao seu fogar.
+          </p>
+          <div class="cta">
+            <button class="btn btn-primary btn-xl" id="startBtn" disabled>
+              <span class="btn-label">Preparando o mar…</span><span class="btn-progress" aria-hidden="true"></span>
+            </button>
+            <span class="cta-note">Preme Enter para zarpar. Mellor con son.</span>
+          </div>
+        </div>
+        <div class="intro-foot">
+          <ul class="howto reveal" style="--d: 2.3s">
+            <li>
+              <span class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><b>Navega</b
+              ><span>Segue as columnas de luz</span>
+            </li>
+            <li>
+              <span class="keys"><kbd>Espazo</kbd></span><b>Refacho</b><span>O vento esgótase e volve</span>
+            </li>
+            <li>
+              <span class="keys"><kbd>E</kbd></span><b>Encontros</b><span>Meiga, mouro e sereia</span>
+            </li>
+          </ul>
+          <div class="light-entry reveal" style="--d: 0.15s" aria-hidden="true">
+            <span class="le-name">Faro de Fisterra</span>
+            <span class="le-pos">42° 53′ N 9° 16′ O</span>
+            <div class="le-char">
+              <span>GpD(7) B 30 s</span
+              ><span class="flashes"
+                ><i style="--i: 0"></i><i style="--i: 1"></i><i style="--i: 2"></i><i style="--i: 3"></i
+                ><i style="--i: 4"></i><i style="--i: 5"></i><i style="--i: 6"></i></span
+              >
+            </div>
+            <span class="le-state">Apagado pola brétema</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen pause hidden" id="pauseOverlay" aria-labelledby="pauseTitle">
+      <div class="screen-grid">
+        <div class="pause-main">
+          <h2 class="h1" id="pauseTitle">O mar<br>agarda.</h2>
+          <p class="lede">A túa dorna queda fondeada. Cando queiras, volvemos á travesía.</p>
+          <div class="btn-row">
+            <button class="btn btn-primary btn-lg" id="resumeBtn"><span class="btn-label">Continuar</span></button>
+            <button class="btn btn-ghost btn-lg" id="restartPauseBtn">
+              <span class="btn-label">Comezar de novo</span>
+            </button>
+          </div>
+        </div>
+        <div class="pause-side">
+          <div class="side-block">
+            <div class="side-title">Calidade gráfica</div>
+            <div class="segmented" id="qualitySeg" role="radiogroup" aria-label="Calidade gráfica">
+              <button role="radio" data-quality="auto">Auto</button
+              ><button role="radio" data-quality="high">Alta</button
+              ><button role="radio" data-quality="medium">Media</button
+              ><button role="radio" data-quality="low">Baixa</button>
+            </div>
+            <div class="side-note">Agora en <b id="qualityNow">—</b>. Preme <kbd>F</kbd> para ver o rendemento.</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title">Controis</div>
+            <dl class="keymap">
+              <div>
+                <dt><kbd>W</kbd><kbd>S</kbd></dt>
+                <dd>Vela</dd>
+              </div>
+              <div>
+                <dt><kbd>A</kbd><kbd>D</kbd></dt>
+                <dd>Temón</dd>
+              </div>
+              <div>
+                <dt><kbd>Espazo</kbd></dt>
+                <dd>Refacho</dd>
+              </div>
+              <div>
+                <dt><kbd>E</kbd></dt>
+                <dd>Falar</dd>
+              </div>
+              <div>
+                <dt><kbd>M</kbd></dt>
+                <dd>Son</dd>
+              </div>
+              <div>
+                <dt><kbd>R</kbd></dt>
+                <dd>Reiniciar</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen win hidden" id="winOverlay" aria-labelledby="winTitle">
+      <div class="win-inner">
+        <div class="le-char win-char reveal" style="--d: 0.1s">
+          <span>GpD(7) B 30 s</span
+          ><span class="flashes lit" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <h2 class="h1 win-title reveal" style="--d: 0.25s" id="winTitle">Volveu<br>a luz.</h2>
+        <p class="lede reveal" style="--d: 0.45s">
+          As sete faíscas volveron ao faro. A brétema disípase e o Atlántico recupera o seu camiño.
+        </p>
+        <div class="rank reveal" style="--d: 0.6s">
+          <span class="rank-label">Título gañado</span><b id="rankTitle">Corazón atlántico</b>
+        </div>
+        <dl class="win-stats reveal" style="--d: 0.75s">
+          <div>
+            <dt>Travesía</dt>
+            <dd id="finalTime">00:00</dd>
+          </div>
+          <div>
+            <dt>Mellor marca</dt>
+            <dd id="bestTime">00:00</dd>
+          </div>
+          <div>
+            <dt>Encontros</dt>
+            <dd id="finalQuests">0 / 3</dd>
+          </div>
+          <div>
+            <dt>Lugares</dt>
+            <dd id="finalPlaces">0 / 12</dd>
+          </div>
+        </dl>
+        <div class="btn-row reveal" style="--d: 0.9s">
+          <button class="btn btn-primary btn-lg" id="restartWinBtn">
+            <span class="btn-label">Volver ao mar</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div id="errorBanner" class="error-banner hidden" role="alert">
+      Non foi posible cargar o xogo. Sérveo cun servidor local (non con file://) e recarga a páxina.
+    </div>
+    <script>
+    addEventListener(
+      'error',
+      (e) => {
+        if (!window.__bretemaReady && e.target && e.target.tagName === 'SCRIPT')
+          document.getElementById('errorBanner').classList.remove('hidden');
+      },
+      true,
+    );
+    setTimeout(() => {
+      if (!window.__bretemaReady) document.getElementById('errorBanner').classList.remove('hidden');
+    }, 12000);
+    </script>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

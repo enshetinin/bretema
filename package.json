@@ -1,0 +1,15 @@
+{
+  "name": "bretema",
+  "private": false,
+  "description": "BRÉTEMA — O último faro. Static Three.js game: no build step. This file only pins dev tooling (Biome).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "format": "biome format --write . && uvx ruff@0.17.0 format",
+    "format:check": "biome format . && uvx ruff@0.17.0 format --check",
+    "serve": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15"
+  }
+}

@@ -1,0 +1,10 @@
+cache-dir = "node_modules/.cache/ruff"
+line-length = 120
+indent-width = 4
+target-version = "py311"
+include = ["tools/blender/**/*.py"]
+
+[format]
+quote-style = "single"
+indent-style = "space"
+line-ending = "lf"
